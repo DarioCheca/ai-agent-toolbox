@@ -81,12 +81,11 @@ ai-agent-toolbox/
 ├── src/ai_agent_toolbox/
 │   ├── agent/          # loop, prompts, result types
 │   ├── tools/          # tool definitions, input models, registry
-│   ├── simulation/     # deterministic fleet and scenario loader
+│   ├── simulation/     # deterministic fleet; scenarios/ holds scripted data
 │   ├── limits.py       # execution limits and enforcement
 │   ├── tracing.py      # structured run traces
 │   ├── config.py       # settings from environment
 │   └── cli.py
-├── scenarios/          # scripted fleet states (data, not code)
 ├── evals/
 │   ├── cases/          # evaluation cases
 │   ├── run_evals.py
@@ -112,7 +111,7 @@ All tools are **read-only**, have **strictly validated inputs** (Pydantic models
 | `get_recent_logs` | Recent log entries for one service | `service: str`, `minutes: int (1–60, default 15)`, `level: enum (optional)`, `limit: int (1–50, default 20)` |
 | `get_metrics` | Recent metric values for one service | `service: str`, `metric: enum (latency_p95_ms, error_rate, cpu_percent, memory_percent, request_rate)`, `minutes: int (1–60, default 15)` |
 
-Tool output is truncated to a fixed maximum size before being returned to the model.
+Tool output is truncated to a fixed maximum size, with an explicit marker, before being returned to the model. Tool inputs are validated strictly (unknown fields rejected, numeric arguments not coerced from strings, hard bounds on every number).
 
 ## 6. Models
 
@@ -229,8 +228,8 @@ P1 is complete when all of the following are true:
 
 | # | Milestone | Effort |
 |---|---|---|
-| M0 | Environment and scaffold (WSL2, uv, Docker, GitHub, CI skeleton) | Done / in progress |
-| M1 | Simulation and the three tools, with unit tests | 4–5 h |
+| M0 | Environment and scaffold (WSL2, uv, Docker, GitHub, CI skeleton) | Done |
+| M1 | Simulation and the three tools, with unit tests (M1a simulation: done; M1b tools: in progress) | 4–5 h |
 | M2 | Agent loop and execution limits, with integration tests using a fake model | 6–8 h |
 | M3 | Tracing, secret redaction, CLI, CI quality gates | 5–6 h |
 | M4 | Evaluation dataset, baseline run on both models, thresholds ADR | 6–8 h |
